@@ -2,7 +2,6 @@
  * Job queue service for managing 3D model generation jobs
  */
 import { createClient } from "@supabase/supabase-js";
-import { redisClient } from "../queue/redis-client.js";
 import { v4 as uuidv4 } from "uuid";
 
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -68,26 +67,11 @@ export async function createJob(params: CreateJobParams): Promise<Job | null> {
       return null;
     }
 
-    // Push job to Redis queue for Celery worker
-    const jobPayload = {
-      job_id: jobId,
-      shop: params.shop,
-      product_id: params.productId,
-      product_handle: params.productHandle,
-      variant_id: params.variantId,
-      image_urls: params.imageUrls,
-      metadata: params.metadata,
-    };
+    // TODO: If you want to integrate with a job queue (like Celery, Bull, etc.),
+    // you can add the queue logic here. For now, jobs are stored in Supabase
+    // and can be processed by polling or webhooks.
 
-    await redisClient.lPush(
-      "celery",
-      JSON.stringify({
-        task: "generate_3d_model",
-        id: jobId,
-        args: [],
-        kwargs: jobPayload,
-      })
-    );
+    console.log(`✅ Job created: ${jobId} for product ${params.productId}`);
 
     return {
       id: data.id,
