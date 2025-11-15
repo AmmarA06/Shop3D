@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "npm install:*",
+      "npm run:*",
+      "npm start:*",
+      "python3 *"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
