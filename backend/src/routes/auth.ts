@@ -24,8 +24,8 @@ router.get("/auth", async (req: Request, res: Response) => {
       return res.status(400).send("Invalid shop domain");
     }
 
-    // Begin OAuth
-    await shopify.auth.begin({
+    // Begin OAuth (this method handles the response/redirect)
+    return await shopify.auth.begin({
       shop: shopify.utils.sanitizeShop(shop, true)!,
       callbackPath: "/api/auth/callback",
       isOnline: false, // Offline access for background jobs
@@ -34,7 +34,7 @@ router.get("/auth", async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Error in /auth:", error);
-    res.status(500).send("Authentication failed");
+    return res.status(500).send("Authentication failed");
   }
 });
 
@@ -66,10 +66,10 @@ router.get("/auth/callback", async (req: Request, res: Response) => {
     const host = req.query.host as string;
     const redirectUrl = `/?shop=${session.shop}&host=${host}`;
 
-    res.redirect(redirectUrl);
+    return res.redirect(redirectUrl);
   } catch (error) {
     console.error("Error in /auth/callback:", error);
-    res.status(500).send("Authentication callback failed");
+    return res.status(500).send("Authentication callback failed");
   }
 });
 
@@ -94,14 +94,14 @@ router.get("/auth/session", async (req: Request, res: Response) => {
       return res.status(401).json({ error: "Session not found" });
     }
 
-    res.json({
+    return res.json({
       shop: session.shop,
       scope: session.scope,
-      isActive: session.isActive(),
+      isActive: session.isActive(shopify.config.scopes),
     });
   } catch (error) {
     console.error("Error getting session:", error);
-    res.status(500).json({ error: "Failed to get session" });
+    return res.status(500).json({ error: "Failed to get session" });
   }
 });
 

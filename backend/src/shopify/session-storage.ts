@@ -3,7 +3,6 @@
  * Stores Shopify OAuth session data
  */
 import { Session } from "@shopify/shopify-api";
-import { SessionStorage } from "@shopify/shopify-api/lib/session/types";
 import { createClient } from "@supabase/supabase-js";
 
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -15,7 +14,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-export class SupabaseSessionStorage implements SessionStorage {
+export class SupabaseSessionStorage {
   async storeSession(session: Session): Promise<boolean> {
     try {
       const { error } = await supabase.from("shopify_sessions").upsert({
@@ -79,6 +78,7 @@ export class SupabaseSessionStorage implements SessionStorage {
             first_name: data.user_first_name,
             last_name: data.user_last_name,
             email: data.user_email,
+            email_verified: true,
             account_owner: data.account_owner,
             locale: data.locale,
             collaborator: data.collaborator,
@@ -162,6 +162,7 @@ export class SupabaseSessionStorage implements SessionStorage {
               first_name: record.user_first_name,
               last_name: record.user_last_name,
               email: record.user_email,
+              email_verified: true,
               account_owner: record.account_owner,
               locale: record.locale,
               collaborator: record.collaborator,

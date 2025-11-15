@@ -15,47 +15,25 @@ export const WEBHOOK_TOPICS = {
  */
 export async function registerWebhooks(session: Session): Promise<boolean> {
   try {
-    const webhookUrl = `${process.env.SHOPIFY_APP_URL}/api/webhooks`;
+    // Register all webhooks that were configured in shopify config
+    const response = await shopify.webhooks.register({
+      session,
+    });
 
-    const webhooksToRegister = [
-      {
-        topic: WEBHOOK_TOPICS.PRODUCTS_UPDATE,
-        path: `${webhookUrl}/products/update`,
-      },
-      {
-        topic: WEBHOOK_TOPICS.PRODUCTS_DELETE,
-        path: `${webhookUrl}/products/delete`,
-      },
-      {
-        topic: WEBHOOK_TOPICS.APP_UNINSTALLED,
-        path: `${webhookUrl}/app/uninstalled`,
-      },
-    ];
-
-    const results = await Promise.all(
-      webhooksToRegister.map(async ({ topic, path }) => {
-        try {
-          const response = await shopify.webhooks.register({
-            session,
-            topic,
-            path,
-          });
-
-          if (!response.success) {
-            console.error(`Failed to register ${topic} webhook:`, response);
-            return false;
-          }
-
+    // Check if all webhooks were registered successfully
+    let allSuccess = true;
+    for (const [topic, results] of Object.entries(response)) {
+      for (const result of results) {
+        if (!result.success) {
+          console.error(`Failed to register ${topic} webhook:`, result);
+          allSuccess = false;
+        } else {
           console.log(`✅ Registered ${topic} webhook`);
-          return true;
-        } catch (error) {
-          console.error(`Error registering ${topic} webhook:`, error);
-          return false;
         }
-      })
-    );
+      }
+    }
 
-    return results.every((result) => result === true);
+    return allSuccess;
   } catch (error) {
     console.error("Failed to register webhooks:", error);
     return false;

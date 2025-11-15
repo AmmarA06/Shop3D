@@ -12,7 +12,7 @@ export async function verifyRequest(
   req: Request,
   res: Response,
   next: NextFunction
-) {
+): Promise<void> {
   try {
     const sessionId = await shopify.session.getCurrentId({
       isOnline: false,
@@ -21,13 +21,15 @@ export async function verifyRequest(
     });
 
     if (!sessionId) {
-      return res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
 
     const session = await sessionStorage.loadSession(sessionId);
 
-    if (!session || !session.isActive()) {
-      return res.status(401).json({ error: "Session expired" });
+    if (!session) {
+      res.status(401).json({ error: "Session expired" });
+      return;
     }
 
     // Attach session to request for use in routes
@@ -47,14 +49,15 @@ export async function verifyWebhook(
   req: Request,
   res: Response,
   next: NextFunction
-) {
+): Promise<void> {
   try {
     const hmac = req.headers["x-shopify-hmac-sha256"] as string;
     const topic = req.headers["x-shopify-topic"] as string;
     const shop = req.headers["x-shopify-shop-domain"] as string;
 
     if (!hmac || !topic || !shop) {
-      return res.status(401).json({ error: "Missing webhook headers" });
+      res.status(401).json({ error: "Missing webhook headers" });
+      return;
     }
 
     // Get raw body for HMAC verification
@@ -67,7 +70,8 @@ export async function verifyWebhook(
     });
 
     if (!isValid) {
-      return res.status(401).json({ error: "Invalid webhook signature" });
+      res.status(401).json({ error: "Invalid webhook signature" });
+      return;
     }
 
     (req as any).webhookTopic = topic;

@@ -2,7 +2,7 @@
  * Shopify API configuration
  */
 import "@shopify/shopify-api/adapters/node";
-import { shopifyApi, LATEST_API_VERSION } from "@shopify/shopify-api";
+import { shopifyApi, LATEST_API_VERSION, DeliveryMethod } from "@shopify/shopify-api";
 import { restResources } from "@shopify/shopify-api/rest/admin/2024-01";
 
 if (!process.env.SHOPIFY_API_KEY) {
@@ -30,6 +30,23 @@ export const shopify = shopifyApi({
   apiVersion: LATEST_API_VERSION,
   isEmbeddedApp: true,
   restResources,
+});
+
+// Configure webhook handlers
+const webhookUrl = `${process.env.SHOPIFY_APP_URL}/api/webhooks`;
+shopify.webhooks.addHandlers({
+  PRODUCTS_UPDATE: {
+    deliveryMethod: DeliveryMethod.Http,
+    callbackUrl: `${webhookUrl}/products/update`,
+  },
+  PRODUCTS_DELETE: {
+    deliveryMethod: DeliveryMethod.Http,
+    callbackUrl: `${webhookUrl}/products/delete`,
+  },
+  APP_UNINSTALLED: {
+    deliveryMethod: DeliveryMethod.Http,
+    callbackUrl: `${webhookUrl}/app/uninstalled`,
+  },
 });
 
 export const SHOPIFY_CONFIG = {
