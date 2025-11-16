@@ -29,6 +29,8 @@ class Product3DViewer {
     // Shop data from Liquid
     this.shopDomain = container.dataset.shopDomain;
     this.apiUrl = container.dataset.apiUrl;
+    this.supabaseUrl = container.dataset.supabaseUrl || 'https://wvmouyqnsuxmiatguxca.supabase.co';
+    this.supabaseBucket = container.dataset.supabaseBucket || '3d-models';
 
     // Current product
     this.currentProduct = null;
@@ -129,13 +131,15 @@ class Product3DViewer {
     
     try {
       // Fetch GLB files from Supabase storage bucket
-      const supabaseUrl = 'https://wvmouyqnsuxmiatguxca.supabase.co';
-      const bucketName = '3d-models';
-      const shopFolder = 'test-shop.myshopify.com';
+      // Use shop domain from Liquid template (dynamic per store)
+      const supabaseUrl = this.supabaseUrl;
+      const bucketName = this.supabaseBucket;
+      const shopFolder = this.shopDomain;
       
       const listUrl = `${supabaseUrl}/storage/v1/object/list/${bucketName}?prefix=${shopFolder}/`;
       
       console.log('🔍 Fetching models from:', listUrl);
+      console.log('🏪 Shop domain:', shopFolder);
       
       const response = await fetch(listUrl);
       
@@ -268,8 +272,9 @@ class Product3DViewer {
         
         // DEMO MODE: Return a demo model for testing
         // Remove this fallback once you have real models generated
+        // Use dynamic Supabase URL and shop domain
         return {
-          modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/123456789.glb',
+          modelUrl: `${this.supabaseUrl}/storage/v1/object/public/${this.supabaseBucket}/${this.shopDomain}/demo-model.glb`,
           demo: true
         };
       }
@@ -279,8 +284,9 @@ class Product3DViewer {
       console.error('Error fetching model data:', error);
       
       // DEMO MODE: Fallback to demo model on error
+      // Use dynamic Supabase URL and shop domain
       return {
-        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/123456789.glb',
+        modelUrl: `${this.supabaseUrl}/storage/v1/object/public/${this.supabaseBucket}/${this.shopDomain}/demo-model.glb`,
         demo: true
       };
     }

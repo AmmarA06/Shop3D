@@ -49,6 +49,7 @@ export default function ProductDetailPage() {
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
     null
   );
+  const [shopDomain, setShopDomain] = useState<string | null>(null);
 
   // Fetch product jobs to check for existing 3D models
   const { jobs, refetch: refetchJobs } = useProductJobs(productId || null);
@@ -69,6 +70,13 @@ export default function ProductDetailPage() {
         const data = await response.json();
         setProduct(data);
         setSelectedVariantId(data.variants[0]?.id || null);
+        
+        // Extract shop domain from URL params (Shopify embedded app)
+        const urlParams = new URLSearchParams(window.location.search);
+        const shop = urlParams.get('shop');
+        if (shop) {
+          setShopDomain(shop);
+        }
       } catch (err) {
         console.error("Error fetching product:", err);
         setError("Failed to load product details");
@@ -162,11 +170,11 @@ export default function ProductDetailPage() {
       title={product.title}
       backAction={{ onAction: () => navigate("/products") }}
       primaryAction={
-        modelUrl
+        modelUrl && shopDomain
           ? {
               content: "View in Store",
               external: true,
-              url: `https://your-store.myshopify.com/products/${product.handle}`,
+              url: `https://${shopDomain}/products/${product.handle}`,
             }
           : undefined
       }
