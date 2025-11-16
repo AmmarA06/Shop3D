@@ -4,6 +4,7 @@
 
 - Node.js 20+
 - Python 3.11+
+- Ruby 3.2+ (optional, for webhook service)
 - Redis
 - Shopify Partner account
 - Supabase account
@@ -172,14 +173,42 @@ shopify app deploy
 5. Position and configure the block
 6. Save
 
-## 7. Expose Local Server
+## 7. Rails Webhooks Service (Optional)
 
-Use ngrok to expose your backend:
-```bash
-ngrok http 5000
+Dedicated microservice for handling Shopify webhooks with HMAC verification.
+
+### Environment Variables
+Create `rails-webhooks/.env`:
+```env
+RAILS_ENV=development
+PORT=4000
+SHOPIFY_WEBHOOK_SECRET=your_webhook_secret
+BACKEND_URL=http://localhost:5000
 ```
 
-Update all `.env` files and Shopify Partner Dashboard with the ngrok URL.
+### Install & Run
+```bash
+cd rails-webhooks
+bundle install
+bundle exec rails server -p 4000
+```
+
+Webhooks service runs on `http://localhost:4000`
+
+See `rails-webhooks/README.md` for detailed documentation.
+
+## 8. Expose Local Server
+
+Use ngrok to expose your backend and webhooks:
+```bash
+# Terminal 1: Backend
+ngrok http 5000
+
+# Terminal 2: Webhooks (optional)
+ngrok http 4000
+```
+
+Update all `.env` files and Shopify Partner Dashboard with the ngrok URLs.
 
 ## Development Workflow
 
@@ -208,7 +237,13 @@ cd worker
 celery -A app.worker worker --loglevel=info
 ```
 
-**Terminal 5 - ngrok (for Shopify):**
+**Terminal 5 - Rails Webhooks (Optional):**
+```bash
+cd rails-webhooks
+bundle exec rails server -p 4000
+```
+
+**Terminal 6 - ngrok (for Shopify):**
 ```bash
 ngrok http 5000
 ```
@@ -217,6 +252,7 @@ ngrok http 5000
 
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:5000
+- Rails Webhooks: http://localhost:4000 (optional)
 - Shopify Admin: Your dev store admin → Apps → 3D Store Visualizer
 - Storefront: Your dev store product pages (with extension enabled)
 
