@@ -7,7 +7,6 @@ import SimplePage from "./pages/SimplePage";
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
-import TestViewerPage from "./pages/TestViewerPage";
 
 function AppContent() {
   const [config, setConfig] = useState<any>(null);
@@ -39,7 +38,6 @@ function AppContent() {
           <Routes>
             <Route path="/" element={<SimplePage />} />
             <Route path="/home" element={<HomePage />} />
-            <Route path="/test-viewer" element={<TestViewerPage />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/products/:productId" element={<ProductDetailPage />} />
           </Routes>
@@ -63,7 +61,6 @@ function AppContent() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/test-viewer" element={<TestViewerPage />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/products/:productId" element={<ProductDetailPage />} />
           </Routes>

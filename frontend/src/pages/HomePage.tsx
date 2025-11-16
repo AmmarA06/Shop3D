@@ -20,10 +20,7 @@ export default function HomePage() {
                 </Text>
               </div>
               <div style={{ marginTop: "24px", display: "flex", gap: "12px" }}>
-                <Button primary onClick={() => navigate("/test-viewer")}>
-                  Test 3D Viewer
-                </Button>
-                <Button onClick={() => navigate("/products")}>
+                <Button primary onClick={() => navigate("/products")}>
                   View Products
                 </Button>
               </div>
