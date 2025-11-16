@@ -1,0 +1,15 @@
+# Shopify Theme App Extension Configuration
+# https://shopify.dev/docs/api/app-extensions/theme
+
+api_version = "2024-10"
+
+[[extensions]]
+uid = "eee18f31-94c4-100e-0e5d-0c3f722d6ab3d2a859e8"
+type = "theme"
+name = "3D Product Viewer"
+handle = "product-3d-viewer"
+
+[extensions.settings]
+  [[extensions.settings.blocks]]
+  type = "product_3d_viewer"
+  name = "3D Product Viewer"

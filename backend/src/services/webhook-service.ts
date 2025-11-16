@@ -49,8 +49,8 @@ export async function handleProductUpdate(payload: any): Promise<void> {
     console.log("Product updated:", payload.id);
 
     // TODO: Check if this product has 3D enabled
-    // TODO: If yes, queue regeneration job in Redis
-    // TODO: Forward to Rails webhook service for normalization
+    // TODO: If yes, queue regeneration job
+    // TODO: Trigger 3D model generation process
 
     // For now, just log
     console.log("Product update received, regeneration will be queued");
@@ -69,7 +69,6 @@ export async function handleProductDelete(payload: any): Promise<void> {
 
     // TODO: Delete 3D model files from Supabase storage
     // TODO: Delete job records from database
-    // TODO: Forward to Rails webhook service
 
     console.log("Product deletion processed");
   } catch (error) {

@@ -1,6 +1,11 @@
 /**
  * Shopify API configuration
  */
+import dotenv from "dotenv";
+
+// Load environment variables first
+dotenv.config();
+
 import "@shopify/shopify-api/adapters/node";
 import { shopifyApi, LATEST_API_VERSION, DeliveryMethod } from "@shopify/shopify-api";
 import { restResources } from "@shopify/shopify-api/rest/admin/2024-01";

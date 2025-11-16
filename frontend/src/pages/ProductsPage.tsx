@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Page,
   Layout,
@@ -10,7 +11,6 @@ import {
   Button,
   Spinner,
 } from "@shopify/polaris";
-import { ImageMajor } from "@shopify/polaris-icons";
 
 interface Product {
   id: string;
@@ -24,6 +24,7 @@ interface Product {
 }
 
 export default function ProductsPage() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,9 +52,10 @@ export default function ProductsPage() {
     }
   };
 
-  const handleEnable3D = (productId: string) => {
-    // TODO: Implement 3D model generation
-    console.log("Enable 3D for product:", productId);
+  const handleViewProduct = (productId: string) => {
+    // Extract numeric ID from Shopify GID if needed
+    const id = productId.replace("gid://shopify/Product/", "");
+    navigate(`/products/${id}`);
   };
 
   if (loading) {
@@ -100,7 +102,10 @@ export default function ProductsPage() {
                 const media = featuredImage ? (
                   <Thumbnail source={featuredImage.url} alt={title} />
                 ) : (
-                  <Thumbnail source={ImageMajor} alt={title} />
+                  <Thumbnail
+                    source="https://via.placeholder.com/100?text=No+Image"
+                    alt={title}
+                  />
                 );
 
                 return (
@@ -108,6 +113,7 @@ export default function ProductsPage() {
                     id={id}
                     media={media}
                     accessibilityLabel={`View details for ${title}`}
+                    onClick={() => handleViewProduct(id)}
                   >
                     <div
                       style={{
@@ -128,8 +134,11 @@ export default function ProductsPage() {
                           </div>
                         )}
                       </div>
-                      <Button onClick={() => handleEnable3D(id)}>
-                        Enable 3D
+                      <Button onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewProduct(id);
+                      }}>
+                        View Details
                       </Button>
                     </div>
                   </ResourceItem>

@@ -19,8 +19,11 @@ export default function HomePage() {
                   customers can view, rotate, and explore on your storefront.
                 </Text>
               </div>
-              <div style={{ marginTop: "24px" }}>
-                <Button primary onClick={() => navigate("/products")}>
+              <div style={{ marginTop: "24px", display: "flex", gap: "12px" }}>
+                <Button primary onClick={() => navigate("/test-viewer")}>
+                  Test 3D Viewer
+                </Button>
+                <Button onClick={() => navigate("/products")}>
                   View Products
                 </Button>
               </div>
@@ -35,9 +38,16 @@ export default function HomePage() {
                 Getting Started
               </Text>
               <div style={{ marginTop: "12px" }}>
-                <ol>
-                  <li>Select products to enable 3D viewing</li>
-                  <li>We'll generate 3D models from your product photos</li>
+                <ol style={{ paddingLeft: "20px" }}>
+                  <li style={{ marginBottom: "8px" }}>
+                    Click "Test 3D Viewer" to see sample 3D models
+                  </li>
+                  <li style={{ marginBottom: "8px" }}>
+                    Select products to enable 3D viewing
+                  </li>
+                  <li style={{ marginBottom: "8px" }}>
+                    We'll generate 3D models from your product photos
+                  </li>
                   <li>Customers can view products in 3D on your storefront</li>
                 </ol>
               </div>

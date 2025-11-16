@@ -1,0 +1,37 @@
+{
+  "name": "3D Product Viewer",
+  "blocks": {
+    "product_3d_viewer": {
+      "name": "3D Product Viewer",
+      "settings": {
+        "show_header": {
+          "label": "Show header"
+        },
+        "heading": {
+          "label": "Heading"
+        },
+        "show_instructions": {
+          "label": "Show instructions"
+        },
+        "instructions_text": {
+          "label": "Instructions text"
+        },
+        "loading_text": {
+          "label": "Loading text"
+        },
+        "error_text": {
+          "label": "Error text"
+        },
+        "viewer_height": {
+          "label": "Viewer height"
+        },
+        "auto_rotate": {
+          "label": "Auto-rotate by default"
+        },
+        "show_grid": {
+          "label": "Show grid"
+        }
+      }
+    }
+  }
+}

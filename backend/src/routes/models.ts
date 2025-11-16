@@ -8,7 +8,61 @@ import * as productService from "../services/product-service.js";
 
 const router = Router();
 
-// Apply authentication middleware
+/**
+ * PUBLIC STOREFRONT ENDPOINT
+ * GET /api/models/storefront/:productId
+ * Get the 3D model URL for a product/variant (used by Theme App Extension)
+ * No authentication required - this is for customer-facing storefront
+ */
+router.get("/storefront/:productId", async (req: Request, res: Response) => {
+  try {
+    const { productId } = req.params;
+    const { variantId, shop } = req.query;
+
+    if (!shop) {
+      return res.status(400).json({ error: "shop parameter is required" });
+    }
+
+    // Get the most recent completed job for this product/variant
+    const jobs = await jobService.getJobsByProduct(
+      shop as string,
+      productId.startsWith("gid://") ? productId : `gid://shopify/Product/${productId}`
+    );
+
+    // Filter for completed jobs
+    let completedJobs = jobs.filter((job) => job.status === "completed" && job.modelUrl);
+
+    // If variantId specified, filter for that variant
+    if (variantId) {
+      completedJobs = completedJobs.filter((job) => job.variantId === variantId);
+    }
+
+    // Get the most recent one
+    const latestJob = completedJobs.sort(
+      (a, b) => new Date(b.completedAt || 0).getTime() - new Date(a.completedAt || 0).getTime()
+    )[0];
+
+    if (!latestJob) {
+      return res.status(404).json({
+        error: "No 3D model found for this product",
+        productId,
+        variantId: variantId || null,
+      });
+    }
+
+    res.json({
+      modelUrl: latestJob.modelUrl,
+      productId: latestJob.productId,
+      variantId: latestJob.variantId,
+      completedAt: latestJob.completedAt,
+    });
+  } catch (error) {
+    console.error("Error fetching storefront model:", error);
+    res.status(500).json({ error: "Failed to fetch model" });
+  }
+});
+
+// Apply authentication middleware to admin endpoints
 router.use(verifyRequest);
 
 /**
