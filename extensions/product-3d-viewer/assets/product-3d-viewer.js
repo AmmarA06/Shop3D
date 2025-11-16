@@ -8,8 +8,19 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 class Product3DViewer {
+  // ============================================
+  // CAMERA DEFAULT SETTINGS - CUSTOMIZE HERE
+  // ============================================
+  static DEFAULT_CAMERA_POSITION = { x: 0, y: 1, z: -3 };  // Camera position (x, y, z)
+  static DEFAULT_CAMERA_FOV = 50;                          // Field of view (degrees)
+  static DEFAULT_MIN_DISTANCE = 2.5;                         // Minimum zoom distance
+  static DEFAULT_MAX_DISTANCE = 10;                        // Maximum zoom distance
+  static DEFAULT_TARGET = { x: 0, y: 0, z: 0 };            // What camera looks at (center point)
+  
   constructor(container) {
     this.container = container;
+    this.widgetContainer = container.querySelector('[data-widget]');
+    this.viewerContainer = container.querySelector('[data-viewer]');
     this.canvasContainer = container.querySelector('[data-canvas]');
     this.loadingContainer = container.querySelector('[data-loading]');
     this.errorContainer = container.querySelector('[data-error]');
@@ -32,20 +43,53 @@ class Product3DViewer {
     this.model = null;
     this.animationId = null;
     this.gridHelper = null;
+    this.groundPlane = null;
 
     // Settings
     this.autoRotate = false;
     this.showGrid = true;
-    this.isFullscreen = false;
+    this.isViewerOpen = false;
 
     this.init();
   }
 
   async init() {
     try {
-      console.log('🎨 Initializing 3D Viewer...');
+      console.log('🎨 Initializing 3D Viewer Widget...');
       
-      // Initialize Three.js first
+      // Setup widget button listeners
+      this.setupWidgetListeners();
+
+    } catch (error) {
+      console.error('❌ 3D Viewer Error:', error);
+    }
+  }
+  
+  setupWidgetListeners() {
+    const openBtn = this.container.querySelector('[data-open-viewer]');
+    const closeBtn = this.container.querySelector('[data-close-viewer]');
+    
+    if (openBtn) {
+      openBtn.addEventListener('click', () => this.openViewer());
+    }
+    
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => this.closeViewer());
+    }
+  }
+  
+  async openViewer() {
+    if (this.isViewerOpen) return;
+    
+    console.log('🎬 Opening 3D Viewer...');
+    this.isViewerOpen = true;
+    
+    // Hide widget, show viewer
+    this.widgetContainer.style.display = 'none';
+    this.viewerContainer.style.display = 'block';
+    
+    // Initialize Three.js on first open
+    if (!this.scene) {
       console.log('🎬 Initializing Three.js...');
       this.initThreeJS();
       
@@ -57,36 +101,96 @@ class Product3DViewer {
       
       // Start render loop
       this.animate();
-
-    } catch (error) {
-      console.error('❌ 3D Viewer Error:', error);
-      this.showError();
+    } else {
+      // Just resize if already initialized
+      this.onWindowResize();
     }
+    
+    // Smooth scroll to viewer
+    this.container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  
+  closeViewer() {
+    if (!this.isViewerOpen) return;
+    
+    console.log('📦 Closing 3D Viewer...');
+    this.isViewerOpen = false;
+    
+    // Show widget, hide viewer
+    this.widgetContainer.style.display = 'block';
+    this.viewerContainer.style.display = 'none';
+    
+    // Smooth scroll to widget
+    this.container.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   
   async loadProducts() {
     console.log('📦 Loading products...');
     
-    // DEMO MODE: Use hardcoded products
+    // DEMO MODE: Use Supabase-hosted models
     // TODO: Fetch from Shopify API
+    const baseUrl = 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com';
+    
     this.products = [
       {
         id: '1',
-        title: 'Demo Cube',
-        handle: 'demo-cube',
-        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/123456789.glb'
+        title: 'The Multi-location Snowboard',
+        handle: 'product-1',
+        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmp27akif7r.glb'
       },
       {
         id: '2',
-        title: 'Water Bottle',
-        handle: 'water-bottle',
-        modelUrl: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/WaterBottle/glTF-Binary/WaterBottle.glb'
+        title: 'The Collection Snowboard: Hydrogen',
+        handle: 'product-2',
+        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmp7mouhzar.glb'
       },
       {
         id: '3',
-        title: 'Lantern',
-        handle: 'lantern',
-        modelUrl: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Lantern/glTF-Binary/Lantern.glb'
+        title: 'The Multi-managed Snowboard',
+        handle: 'product-3',
+        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmpbl18shwv.glb'
+      },
+      {
+        id: '4',
+        title: 'The Videographer Snowboard',
+        handle: 'product-4',
+        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmpoxa3bbyi.glb'
+      },
+      {
+        id: '5',
+        title: 'The Inventory Not Tracked Snowboard',
+        handle: 'product-5',
+        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmph115jak4.glb'
+      },
+      {
+        id: '6',
+        title: 'The Compare at Price Snowboard',
+        handle: 'product-6',
+        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmptqzfehg8.glb'
+      },
+      {
+        id: '7',
+        title: 'The Collection Snowboard: Oxygen',
+        handle: 'product-7',
+        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmpjfyhgu1_.glb'
+      },
+      {
+        id: '8',
+        title: 'The Collection Snowboard: Liquid',
+        handle: 'product-8',
+        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmpgyr_wgwt.glb'
+      },
+      {
+        id: '9',
+        title: 'The Out of Stock Snowboard',
+        handle: 'product-9',
+        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmpcuc1utro.glb'
+      },
+      {
+        id: '10',
+        title: 'The 3p Fulfilled Snowboard',
+        handle: 'product-10',
+        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmpph2d7i9w.glb'
       }
     ];
     
@@ -112,12 +216,7 @@ class Product3DViewer {
       name.className = 'product-3d-viewer__product-name';
       name.textContent = product.title;
       
-      const meta = document.createElement('p');
-      meta.className = 'product-3d-viewer__product-meta';
-      meta.textContent = '3D Model Available';
-      
       button.appendChild(name);
-      button.appendChild(meta);
       
       button.addEventListener('click', () => this.selectProduct(product));
       
@@ -201,19 +300,49 @@ class Product3DViewer {
     }
   }
 
+  createSkyGradient() {
+    // Create a canvas for the gradient texture
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const context = canvas.getContext('2d');
+    
+    // Create vertical gradient with light blue shades
+    const gradient = context.createLinearGradient(0, 0, 0, canvas.height);
+    
+    // Light blue shades from top to bottom
+    gradient.addColorStop(0, '#E0F6FF');    // Very light sky blue (top)
+    gradient.addColorStop(0.3, '#B0E0E6');  // Powder blue
+    gradient.addColorStop(0.6, '#87CEEB');   // Sky blue
+    gradient.addColorStop(1, '#ADD8E6');     // Light blue (bottom)
+    
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Convert to Three.js texture
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.needsUpdate = true;
+    return texture;
+  }
+
   initThreeJS() {
     // Scene
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xf6f8fa);
+    // Sky blue gradient background
+    this.scene.background = this.createSkyGradient();
 
     // Camera
     this.camera = new THREE.PerspectiveCamera(
-      50,
+      Product3DViewer.DEFAULT_CAMERA_FOV,
       this.canvasContainer.clientWidth / this.canvasContainer.clientHeight,
       0.1,
       1000
     );
-    this.camera.position.set(3, 3, 3);
+    this.camera.position.set(
+      Product3DViewer.DEFAULT_CAMERA_POSITION.x,
+      Product3DViewer.DEFAULT_CAMERA_POSITION.y,
+      Product3DViewer.DEFAULT_CAMERA_POSITION.z
+    );
 
     // Renderer
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -238,18 +367,39 @@ class Product3DViewer {
     directionalLight2.position.set(-5, 5, -5);
     this.scene.add(directionalLight2);
 
-    // Grid
-    this.gridHelper = new THREE.GridHelper(10, 10, 0x888888, 0x444444);
+    // Grid - Large gray grid covering entire floor
+    // Parameters: size (total grid size), divisions (number of grid lines), color1 (main lines), color2 (subdivisions)
+    this.gridHelper = new THREE.GridHelper(100, 100, 0x888888, 0xcccccc);
+    this.gridHelper.material.opacity = 0.8;
+    this.gridHelper.material.transparent = true;
     this.scene.add(this.gridHelper);
+    
+    // Add a gray ground plane for better visual coverage
+    const groundGeometry = new THREE.PlaneGeometry(200, 200);
+    const groundMaterial = new THREE.MeshBasicMaterial({ 
+      color: 0xf5f5f5,
+      side: THREE.DoubleSide
+    });
+    this.groundPlane = new THREE.Mesh(groundGeometry, groundMaterial);
+    this.groundPlane.rotation.x = -Math.PI / 2; // Rotate to be horizontal
+    this.groundPlane.position.y = 0;
+    this.groundPlane.renderOrder = -1; // Render behind other objects
+    this.scene.add(this.groundPlane);
 
     // OrbitControls
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.05;
-    this.controls.minDistance = 1;
-    this.controls.maxDistance = 10;
+    this.controls.minDistance = Product3DViewer.DEFAULT_MIN_DISTANCE;
+    this.controls.maxDistance = Product3DViewer.DEFAULT_MAX_DISTANCE;
+    this.controls.target.set(
+      Product3DViewer.DEFAULT_TARGET.x,
+      Product3DViewer.DEFAULT_TARGET.y,
+      Product3DViewer.DEFAULT_TARGET.z
+    );
     this.controls.autoRotate = this.autoRotate;
-    this.controls.autoRotateSpeed = 2;
+    this.controls.autoRotateSpeed = 4;
+    this.controls.update();
 
     // Handle window resize
     window.addEventListener('resize', () => this.onWindowResize());
@@ -271,6 +421,14 @@ class Product3DViewer {
           const box = new THREE.Box3().setFromObject(this.model);
           const yOffset = -box.min.y;
           this.model.position.y = yOffset;
+          
+          // Optional: Center model horizontally (uncomment if needed)
+          // const center = box.getCenter(new THREE.Vector3());
+          // this.model.position.x = -center.x;
+          // this.model.position.z = -center.z;
+          
+          // Optional: Rotate model (uncomment if needed)
+          // this.model.rotation.y = Math.PI / 4; // 45 degrees
 
           this.scene.add(this.model);
           resolve();
@@ -341,6 +499,9 @@ class Product3DViewer {
     if (this.gridHelper) {
       this.gridHelper.visible = this.showGrid;
     }
+    if (this.groundPlane) {
+      this.groundPlane.visible = this.showGrid;
+    }
   }
 
   toggleAutoRotate() {
@@ -351,9 +512,24 @@ class Product3DViewer {
   }
 
   resetCamera() {
-    if (this.controls) {
-      this.controls.reset();
-    }
+    if (!this.camera || !this.controls) return;
+    
+    // Reset camera position
+    this.camera.position.set(
+      Product3DViewer.DEFAULT_CAMERA_POSITION.x,
+      Product3DViewer.DEFAULT_CAMERA_POSITION.y,
+      Product3DViewer.DEFAULT_CAMERA_POSITION.z
+    );
+    
+    // Reset controls target (what camera looks at)
+    this.controls.target.set(
+      Product3DViewer.DEFAULT_TARGET.x,
+      Product3DViewer.DEFAULT_TARGET.y,
+      Product3DViewer.DEFAULT_TARGET.z
+    );
+    
+    // Update controls
+    this.controls.update();
   }
 
   onWindowResize() {

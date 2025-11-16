@@ -6,11 +6,179 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+/* Widget Button (Initial State) */
+.product-3d-viewer__widget {
+  width: 100%;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.product-3d-viewer__widget-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  border-radius: 20px;
+  padding: 2.5rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 2rem;
+  align-items: center;
+  box-shadow: 0 10px 40px rgba(0, 134, 107, 0.1), 
+              0 0 0 1px rgba(0, 134, 107, 0.05);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.product-3d-viewer__widget-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #00D68F 0%, #00866B 100%);
+}
+
+.product-3d-viewer__widget-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0, 134, 107, 0.15), 
+              0 0 0 1px rgba(0, 134, 107, 0.1);
+}
+
+.product-3d-viewer__widget-icon {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.product-3d-viewer__widget-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.product-3d-viewer__widget-title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #00866B 0%, #00D68F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.product-3d-viewer__widget-description {
+  margin: 0;
+  font-size: 1rem;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.product-3d-viewer__widget-button {
+  padding: 1rem 2rem;
+  border: none;
+  background: linear-gradient(135deg, #00D68F 0%, #00866B 100%);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 214, 143, 0.3);
+}
+
+.product-3d-viewer__widget-button:hover {
+  transform: translateX(4px);
+  box-shadow: 0 6px 20px rgba(0, 214, 143, 0.4);
+}
+
+.product-3d-viewer__widget-button:active {
+  transform: translateX(2px);
+}
+
+/* Full Viewer Container */
+.product-3d-viewer__viewer {
+  animation: expandIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes expandIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.product-3d-viewer__viewer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #00866B 0%, #00D68F 100%);
+  border-radius: 20px 20px 0 0;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 134, 107, 0.2);
+}
+
+.product-3d-viewer__viewer-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.product-3d-viewer__viewer-title h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.product-3d-viewer__viewer-close {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.product-3d-viewer__viewer-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
 .product-3d-viewer__layout {
   display: grid;
   grid-template-columns: 1fr 300px;
   gap: 1.5rem;
   align-items: start;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+  border-radius: 0 0 20px 20px;
+  box-shadow: 0 10px 40px rgba(0, 134, 107, 0.08);
 }
 
 .product-3d-viewer__main {
@@ -26,9 +194,16 @@
 .product-3d-viewer__container {
   position: relative;
   background: linear-gradient(135deg, #f6f8fa 0%, #e9ecef 100%);
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 
+              0 0 0 1px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.product-3d-viewer__container:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15), 
+              0 0 0 1px rgba(0, 134, 107, 0.1);
 }
 
 .product-3d-viewer__header {
@@ -222,7 +397,7 @@
 
 .product-3d-viewer__product-btn {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 1rem 1.25rem;
   border: 2px solid #e5e7eb;
   background: white;
   border-radius: 8px;
@@ -234,7 +409,7 @@
   gap: 0.25rem;
 }
 
-.product-3d-viewer__product-btn:hover {
+.product-3d-viewer__product-btn:hover:not(.product-3d-viewer__product-btn--active) {
   border-color: #00866b;
   background: #f0fdf4;
 }
@@ -245,10 +420,17 @@
   color: white;
 }
 
+.product-3d-viewer__product-btn--active:hover {
+  background: linear-gradient(135deg, #00d68f 0%, #00a67e 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 214, 143, 0.3);
+}
+
 .product-3d-viewer__product-name {
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 1.125rem;
   margin: 0;
+  line-height: 1.4;
 }
 
 .product-3d-viewer__product-meta {
@@ -266,19 +448,20 @@
 
 .product-3d-viewer__control-list-btn {
   width: 100%;
-  padding: 1rem 1.25rem;
+  padding: 1.125rem 1.5rem;
   border: 1px solid #e5e7eb;
   background: white;
   border-radius: 8px;
   cursor: pointer;
   text-align: center;
-  font-size: 0.9375rem;
-  font-weight: 500;
+  font-size: 1.0625rem;
+  font-weight: 600;
   transition: all 0.2s ease;
   color: #1a1a1a;
+  letter-spacing: 0.01em;
 }
 
-.product-3d-viewer__control-list-btn:hover {
+.product-3d-viewer__control-list-btn:hover:not(.product-3d-viewer__control-list-btn--active) {
   background: #f9fafb;
   border-color: #00866b;
 }
@@ -289,10 +472,34 @@
   color: white;
 }
 
+.product-3d-viewer__control-list-btn--active:hover {
+  background: linear-gradient(135deg, #00d68f 0%, #00a67e 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 214, 143, 0.3);
+}
+
 /* Responsive */
+@media (max-width: 1024px) {
+  .product-3d-viewer__widget-card {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 2rem;
+    gap: 1.5rem;
+  }
+  
+  .product-3d-viewer__widget-icon {
+    justify-self: center;
+  }
+  
+  .product-3d-viewer__widget-button {
+    justify-self: center;
+  }
+}
+
 @media (max-width: 768px) {
   .product-3d-viewer__layout {
     grid-template-columns: 1fr;
+    padding: 1rem;
   }
   
   .product-3d-viewer__sidebar {
@@ -303,19 +510,24 @@
     height: 400px;
   }
 
-  .product-3d-viewer__controls {
-    bottom: 0.5rem;
-    right: 0.5rem;
-  }
-
-  .product-3d-viewer__control-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
-  }
-
   .product-3d-viewer__instructions p {
     font-size: 0.75rem;
+  }
+  
+  .product-3d-viewer__widget-card {
+    padding: 1.5rem;
+  }
+  
+  .product-3d-viewer__widget-title {
+    font-size: 1.5rem;
+  }
+  
+  .product-3d-viewer__widget-description {
+    font-size: 0.9rem;
+  }
+  
+  .product-3d-viewer__viewer-header {
+    padding: 1rem 1.5rem;
   }
 }
 

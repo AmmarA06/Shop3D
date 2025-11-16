@@ -1,6 +1,6 @@
 {% comment %}
   3D Product Viewer Block
-  Centralized viewer for browsing products in 3D
+  Interactive widget for browsing products in 3D
 {% endcomment %}
 
 {{ 'product-3d-viewer.css' | asset_url | stylesheet_tag }}
@@ -11,7 +11,55 @@
   data-api-url="{{ shop.url }}"
   {{ block.shopify_attributes }}
 >
-  <div class="product-3d-viewer__layout">
+  <!-- Widget Button (Initial State) -->
+  <div class="product-3d-viewer__widget" data-widget>
+    <div class="product-3d-viewer__widget-card">
+      <div class="product-3d-viewer__widget-icon">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="12" fill="url(#gradient1)"/>
+          <path d="M32 16L18 24V40L32 48L46 40V24L32 16Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M32 32V48" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M18 24L32 32L46 24" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs>
+            <linearGradient id="gradient1" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#00D68F"/>
+              <stop offset="1" stop-color="#00866B"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="product-3d-viewer__widget-content">
+        <h3 class="product-3d-viewer__widget-title">View Products in 3D</h3>
+        <p class="product-3d-viewer__widget-description">Explore our products with interactive 3D models. Rotate, zoom, and examine every detail.</p>
+      </div>
+      <button type="button" class="product-3d-viewer__widget-button" data-open-viewer>
+        <span>Open 3D Viewer</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Full Viewer (Hidden Initially) -->
+  <div class="product-3d-viewer__viewer" data-viewer style="display: none;">
+    <div class="product-3d-viewer__viewer-header">
+      <div class="product-3d-viewer__viewer-title">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 6L4 10V18L12 22L20 18V10L12 6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 12V22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M4 10L12 12L20 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>3D Product Viewer</h3>
+      </div>
+      <button type="button" class="product-3d-viewer__viewer-close" data-close-viewer aria-label="Close viewer">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="product-3d-viewer__layout">
     <!-- Main Viewer -->
     <div class="product-3d-viewer__main">
       <div class="product-3d-viewer__container">
@@ -99,6 +147,7 @@
         </div>
       </div>
     </div>
+    </div>
   </div>
 </div>
 
@@ -161,7 +210,7 @@
       "step": 50,
       "unit": "px",
       "label": "Viewer height",
-      "default": 500
+      "default": 700
     },
     {
       "type": "checkbox",
