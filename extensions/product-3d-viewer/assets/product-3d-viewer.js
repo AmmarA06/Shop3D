@@ -127,78 +127,64 @@ class Product3DViewer {
   async loadProducts() {
     console.log('📦 Loading products...');
     
-    // DEMO MODE: Use Supabase-hosted models
-    // TODO: Fetch from Shopify API
-    const baseUrl = 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com';
-    
-    this.products = [
-      {
-        id: '1',
-        title: 'The Multi-location Snowboard',
-        handle: 'product-1',
-        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmp27akif7r.glb'
-      },
-      {
-        id: '2',
-        title: 'The Collection Snowboard: Hydrogen',
-        handle: 'product-2',
-        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmp7mouhzar.glb'
-      },
-      {
-        id: '3',
-        title: 'The Multi-managed Snowboard',
-        handle: 'product-3',
-        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmpbl18shwv.glb'
-      },
-      {
-        id: '4',
-        title: 'The Videographer Snowboard',
-        handle: 'product-4',
-        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmpoxa3bbyi.glb'
-      },
-      {
-        id: '5',
-        title: 'The Inventory Not Tracked Snowboard',
-        handle: 'product-5',
-        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmph115jak4.glb'
-      },
-      {
-        id: '6',
-        title: 'The Compare at Price Snowboard',
-        handle: 'product-6',
-        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmptqzfehg8.glb'
-      },
-      {
-        id: '7',
-        title: 'The Collection Snowboard: Oxygen',
-        handle: 'product-7',
-        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmpjfyhgu1_.glb'
-      },
-      {
-        id: '8',
-        title: 'The Collection Snowboard: Liquid',
-        handle: 'product-8',
-        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmpgyr_wgwt.glb'
-      },
-      {
-        id: '9',
-        title: 'The Out of Stock Snowboard',
-        handle: 'product-9',
-        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmpcuc1utro.glb'
-      },
-      {
-        id: '10',
-        title: 'The 3p Fulfilled Snowboard',
-        handle: 'product-10',
-        modelUrl: 'https://wvmouyqnsuxmiatguxca.supabase.co/storage/v1/object/public/3d-models/test-shop.myshopify.com/tmpph2d7i9w.glb'
+    try {
+      // Fetch GLB files from Supabase storage bucket
+      const supabaseUrl = 'https://wvmouyqnsuxmiatguxca.supabase.co';
+      const bucketName = '3d-models';
+      const shopFolder = 'test-shop.myshopify.com';
+      
+      const listUrl = `${supabaseUrl}/storage/v1/object/list/${bucketName}?prefix=${shopFolder}/`;
+      
+      console.log('🔍 Fetching models from:', listUrl);
+      
+      const response = await fetch(listUrl);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch models: ${response.statusText}`);
       }
-    ];
+      
+      const files = await response.json();
+      
+      // Filter only .glb files and sort by name
+      const glbFiles = files
+        .filter(file => file.name && file.name.endsWith('.glb'))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      
+      console.log(`✅ Found ${glbFiles.length} GLB file(s)`);
+      
+      // Dynamically create products from GLB files
+      this.products = glbFiles.map((file, index) => {
+        const modelNumber = index + 1;
+        const modelUrl = `${supabaseUrl}/storage/v1/object/public/${bucketName}/${shopFolder}/${file.name}`;
+        
+        return {
+          id: String(modelNumber),
+          title: `Model #${modelNumber}`,
+          handle: `model-${modelNumber}`,
+          modelUrl: modelUrl,
+          fileName: file.name
+        };
+      });
+      
+      console.log(`📦 Created ${this.products.length} product(s)`);
+      
+    } catch (error) {
+      console.error('❌ Error loading products from Supabase:', error);
+      
+      // Fallback: empty products array
+      this.products = [];
+      
+      // Show error to user
+      alert('Failed to load 3D models. Please check your connection and try again.');
+    }
     
     this.renderProductList();
     
     // Load first product
     if (this.products.length > 0) {
       await this.selectProduct(this.products[0]);
+    } else {
+      console.warn('⚠️ No products to display');
     }
   }
   
