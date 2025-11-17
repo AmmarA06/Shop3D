@@ -29,7 +29,7 @@ class Product3DViewer {
     // Shop data from Liquid
     this.shopDomain = container.dataset.shopDomain;
     this.apiUrl = container.dataset.apiUrl;
-    this.supabaseUrl = container.dataset.supabaseUrl || 'https://wvmouyqnsuxmiatguxca.supabase.co';
+    this.supabaseUrl = container.dataset.supabaseUrl;
     this.supabaseBucket = container.dataset.supabaseBucket || '3d-models';
 
     // Current product
@@ -57,13 +57,11 @@ class Product3DViewer {
 
   async init() {
     try {
-      console.log('🎨 Initializing 3D Viewer Widget...');
-      
       // Setup widget button listeners
       this.setupWidgetListeners();
 
     } catch (error) {
-      console.error('❌ 3D Viewer Error:', error);
+      console.error('3D Viewer Error:', error);
     }
   }
   
@@ -83,7 +81,6 @@ class Product3DViewer {
   async openViewer() {
     if (this.isViewerOpen) return;
     
-    console.log('🎬 Opening 3D Viewer...');
     this.isViewerOpen = true;
     
     // Hide widget, show viewer
@@ -92,7 +89,6 @@ class Product3DViewer {
     
     // Initialize Three.js on first open
     if (!this.scene) {
-      console.log('🎬 Initializing Three.js...');
       this.initThreeJS();
       
       // Load products
@@ -115,7 +111,6 @@ class Product3DViewer {
   closeViewer() {
     if (!this.isViewerOpen) return;
     
-    console.log('📦 Closing 3D Viewer...');
     this.isViewerOpen = false;
     
     // Show widget, hide viewer
@@ -127,7 +122,6 @@ class Product3DViewer {
   }
   
   async loadProducts() {
-    console.log('📦 Loading products...');
     
     try {
       // Fetch GLB files from Supabase storage bucket
@@ -137,10 +131,7 @@ class Product3DViewer {
       const shopFolder = this.shopDomain;
       
       const listUrl = `${supabaseUrl}/storage/v1/object/list/${bucketName}?prefix=${shopFolder}/`;
-      
-      console.log('🔍 Fetching models from:', listUrl);
-      console.log('🏪 Shop domain:', shopFolder);
-      
+    
       const response = await fetch(listUrl);
       
       if (!response.ok) {
@@ -153,8 +144,6 @@ class Product3DViewer {
       const glbFiles = files
         .filter(file => file.name && file.name.endsWith('.glb'))
         .sort((a, b) => a.name.localeCompare(b.name));
-      
-      console.log(`✅ Found ${glbFiles.length} GLB file(s)`);
       
       // Dynamically create products from GLB files
       this.products = glbFiles.map((file, index) => {
@@ -169,8 +158,6 @@ class Product3DViewer {
           fileName: file.name
         };
       });
-      
-      console.log(`📦 Created ${this.products.length} product(s)`);
       
     } catch (error) {
       console.error('❌ Error loading products from Supabase:', error);
@@ -188,7 +175,7 @@ class Product3DViewer {
     if (this.products.length > 0) {
       await this.selectProduct(this.products[0]);
     } else {
-      console.warn('⚠️ No products to display');
+      console.warn('No products to display');
     }
   }
   
@@ -215,8 +202,6 @@ class Product3DViewer {
   }
   
   async selectProduct(product) {
-    console.log('🔄 Loading product:', product.title);
-    
     this.currentProduct = product;
     
     // Update UI
@@ -240,14 +225,12 @@ class Product3DViewer {
       
       // Load new model
       await this.loadModel(product.modelUrl);
-      console.log('✅ Product loaded successfully!');
-      
       // Reset camera to default position for new product
       this.resetCamera();
       
       this.showViewer();
     } catch (error) {
-      console.error('❌ Failed to load product:', error);
+      console.error('Failed to load product:', error);
       this.showError();
     }
   }
@@ -428,7 +411,6 @@ class Product3DViewer {
         (progress) => {
           // Optional: Show loading progress
           const percentComplete = (progress.loaded / progress.total) * 100;
-          console.log(`Loading: ${percentComplete.toFixed(2)}%`);
         },
         (error) => {
           console.error('Error loading model:', error);
@@ -599,11 +581,9 @@ if (document.readyState === 'loading') {
 }
 
 function initViewers() {
-  console.log('✅ Initializing 3D viewers');
   
   // Initialize all viewers
   const viewers = document.querySelectorAll('.product-3d-viewer');
-  console.log(`📦 Found ${viewers.length} viewer(s)`);
   
   if (viewers.length === 0) {
     console.warn('⚠️ No 3D viewers found on page');
@@ -611,11 +591,10 @@ function initViewers() {
   }
   
   viewers.forEach((container, index) => {
-    console.log(`🎬 Initializing viewer ${index + 1}`);
     try {
       new Product3DViewer(container);
     } catch (error) {
-      console.error(`❌ Failed to initialize viewer ${index + 1}:`, error);
+      console.error(`Failed to initialize viewer ${index + 1}:`, error);
     }
   });
 }
