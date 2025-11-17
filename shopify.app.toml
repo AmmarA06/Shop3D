@@ -1,27 +1,26 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "314d34d3ca8da8eed41ec5c7681d3c1f"
-name = "3d-store-visualizer"
+client_id = "<CLIENT_ID>"
+name = "<APP_NAME>"
 application_url = "http://localhost:3000"
 embedded = true
 
 [build]
 automatically_update_urls_on_dev = true
 include_config_on_deploy = true
-dev_store_url = "teststore123-9951.myshopify.com"
+dev_store_url = "<DEV_STORE>.myshopify.com"
 dev_preview_url = "http://localhost:3000"
 
 [webhooks]
 api_version = "2024-10"
 
 [access_scopes]
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
 scopes = "write_products,read_products"
 
 [auth]
 redirect_urls = [
   "http://localhost:3000/api/auth/callback",
-  "https://*.ngrok.io/api/auth/callback"
+  "https://<YOUR_TUNNEL_SUBDOMAIN>.ngrok.io/api/auth/callback"
 ]
 
 [pos]
