@@ -133,13 +133,6 @@ shopify app deploy
 docker-compose up
 ```
 
-## Documentation
-
-- [SETUP.md](./SETUP.md) - Detailed setup guide
-- [FIXES_APPLIED.md](./FIXES_APPLIED.md) - Recent improvements
-- [rails-webhooks/README.md](./rails-webhooks/README.md) - Webhook service docs
-- [worker/README.md](./worker/README.md) - Worker service docs
-
 ## License
 
 MIT
