@@ -63,11 +63,11 @@ def load_triposr_model():
         model.to(device)
         
         _model_cache = model
-        logger.info("✅ TripoSR model loaded successfully")
+        logger.info("TripoSR model loaded successfully")
         return _model_cache
         
     except Exception as e:
-        logger.error(f"❌ Failed to load TripoSR model: {e}")
+        logger.error(f"Failed to load TripoSR model: {e}")
         logger.warning("Falling back to placeholder mode")
         # Fallback to placeholder
         _model_cache = {"device": get_device(), "status": "placeholder"}
@@ -128,7 +128,7 @@ def generate_3d_model(
         
         # Check if we have a real model or placeholder
         if isinstance(model, dict) and model.get("status") == "placeholder":
-            logger.warning("⚠️  Using placeholder cube mesh - TripoSR not available")
+            logger.warning("Using placeholder cube mesh - TripoSR not available")
             mesh = create_placeholder_mesh()
         else:
             # Use real TripoSR model
@@ -144,7 +144,7 @@ def generate_3d_model(
                 )
                 mesh = meshes[0]
             
-            logger.info("✅ 3D mesh generated with TripoSR")
+            logger.info("3D mesh generated with TripoSR")
         
         # Export as GLB
         export_mesh_as_glb(mesh, output_path)
@@ -153,11 +153,11 @@ def generate_3d_model(
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
         
-        logger.info(f"✅ 3D model generated: {output_path}")
+        logger.info(f"3D model generated: {output_path}")
         return output_path
         
     except Exception as e:
-        logger.error(f"❌ 3D generation failed: {e}")
+        logger.error(f"3D generation failed: {e}")
         # Clear GPU cache on error too
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
@@ -221,10 +221,10 @@ def export_mesh_as_glb(mesh: trimesh.Trimesh, output_path: str):
         # Export as GLB
         mesh.export(output_path, file_type='glb')
         
-        logger.info(f"✅ Mesh exported as GLB: {output_path}")
+        logger.info(f"Mesh exported as GLB: {output_path}")
         
     except Exception as e:
-        logger.error(f"❌ GLB export failed: {e}")
+        logger.error(f"GLB export failed: {e}")
         raise Exception(f"GLB export failed: {str(e)}")
 
 

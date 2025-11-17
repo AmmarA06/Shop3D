@@ -80,11 +80,11 @@ def upload_model_to_supabase(
         # Get public URL
         public_url = supabase.storage.from_(bucket_name).get_public_url(filename)
 
-        logger.info(f"✅ Model uploaded successfully: {public_url}")
+        logger.info(f"Model uploaded successfully: {public_url}")
         return public_url
         
     except Exception as e:
-        logger.error(f"❌ Failed to upload model to Supabase: {e}")
+        logger.error(f"Failed to upload model to Supabase: {e}")
         raise Exception(f"Supabase upload failed: {str(e)}")
 
 
@@ -118,10 +118,10 @@ def delete_model_from_supabase(
         filename += ".glb"
 
         supabase.storage.from_(bucket_name).remove([filename])
-        logger.info(f"✅ Model deleted from Supabase: {filename}")
+        logger.info(f"Model deleted from Supabase: {filename}")
         return True
         
     except Exception as e:
-        logger.error(f"❌ Failed to delete model from Supabase: {e}")
+        logger.error(f"Failed to delete model from Supabase: {e}")
         return False
 

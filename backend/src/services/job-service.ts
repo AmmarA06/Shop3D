@@ -71,7 +71,7 @@ export async function createJob(params: CreateJobParams): Promise<Job | null> {
     // you can add the queue logic here. For now, jobs are stored in Supabase
     // and can be processed by polling or webhooks.
 
-    console.log(`✅ Job created: ${jobId} for product ${params.productId}`);
+    console.log(`Job created: ${jobId} for product ${params.productId}`);
 
     return {
       id: data.id,

@@ -28,7 +28,7 @@ export async function registerWebhooks(session: Session): Promise<boolean> {
           console.error(`Failed to register ${topic} webhook:`, result);
           allSuccess = false;
         } else {
-          console.log(`✅ Registered ${topic} webhook`);
+          console.log(`Registered ${topic} webhook`);
         }
       }
     }

@@ -31,10 +31,10 @@ def download_image(url: str, save_path: str) -> str:
         with open(save_path, "wb") as f:
             f.write(response.content)
         
-        logger.info(f"✅ Image downloaded: {save_path}")
+        logger.info(f"Image downloaded: {save_path}")
         return save_path
     except Exception as e:
-        logger.error(f"❌ Failed to download image: {e}")
+        logger.error(f"Failed to download image: {e}")
         raise Exception(f"Image download failed: {str(e)}")
 
 
@@ -57,10 +57,10 @@ def remove_background(image: Image.Image) -> Image.Image:
         # Remove background
         output = remove(image)
         
-        logger.info("✅ Background removed")
+        logger.info("Background removed")
         return output
     except Exception as e:
-        logger.error(f"❌ Background removal failed: {e}")
+        logger.error(f"Background removal failed: {e}")
         raise Exception(f"Background removal failed: {str(e)}")
 
 
@@ -129,11 +129,11 @@ def center_and_crop_image(
         # Resize to target size
         result = square_img.resize((target_size, target_size), Image.Resampling.LANCZOS)
         
-        logger.info(f"✅ Image centered and cropped to {target_size}x{target_size}")
+        logger.info(f"Image centered and cropped to {target_size}x{target_size}")
         return result
         
     except Exception as e:
-        logger.error(f"❌ Center and crop failed: {e}")
+        logger.error(f"Center and crop failed: {e}")
         raise Exception(f"Center and crop failed: {str(e)}")
 
 
@@ -189,11 +189,11 @@ def preprocess_image(
         if os.path.exists(temp_download):
             os.remove(temp_download)
         
-        logger.info(f"✅ Image preprocessing complete: {output_path}")
+        logger.info(f"Image preprocessing complete: {output_path}")
         return output_path
         
     except Exception as e:
-        logger.error(f"❌ Image preprocessing failed: {e}")
+        logger.error(f"Image preprocessing failed: {e}")
         raise Exception(f"Image preprocessing failed: {str(e)}")
 
 
@@ -231,6 +231,6 @@ def preprocess_images(
     if not preprocessed_paths:
         raise Exception("Failed to preprocess any images")
     
-    logger.info(f"✅ Preprocessed {len(preprocessed_paths)} images")
+    logger.info(f"Preprocessed {len(preprocessed_paths)} images")
     return preprocessed_paths
 

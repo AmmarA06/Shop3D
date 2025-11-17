@@ -26,14 +26,14 @@ def check_redis():
     """Check if Redis is accessible"""
     try:
         redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-        print(f"🔍 Checking Redis connection: {redis_url}")
+        print(f"Checking Redis connection: {redis_url}")
         
         r = redis.from_url(redis_url)
         r.ping()
-        print("✅ Redis is accessible")
+        print("Redis is accessible")
         return r
     except Exception as e:
-        print(f"❌ Redis connection failed: {e}")
+        print(f"Redis connection failed: {e}")
         print("\n💡 Make sure Redis is running:")
         print("   - macOS: brew services start redis")
         print("   - Linux: sudo systemctl start redis")
@@ -43,7 +43,7 @@ def check_redis():
 
 def check_env_vars():
     """Check if required environment variables are set"""
-    print("\n🔍 Checking environment variables...")
+    print("\nChecking environment variables...")
     
     required_vars = [
         "REDIS_URL",
@@ -60,17 +60,17 @@ def check_env_vars():
             display_value = value[:20] + "..." if len(value) > 20 else value
             if "KEY" in var or "SECRET" in var:
                 display_value = "*" * 10
-            print(f"   ✅ {var}: {display_value}")
+            print(f"   {var}: {display_value}")
         else:
-            print(f"   ❌ {var}: NOT SET")
+            print(f"   {var}: NOT SET")
             missing_vars.append(var)
     
     if missing_vars:
-        print(f"\n⚠️  Warning: Some environment variables are not set: {', '.join(missing_vars)}")
+        print(f"\nWarning: Some environment variables are not set: {', '.join(missing_vars)}")
         print("   The worker may fail during execution.")
         print("   Create a .env file in the worker directory with these variables.")
     else:
-        print("\n✅ All required environment variables are set")
+        print("\nAll required environment variables are set")
 
 
 def queue_test_job(redis_client, use_real_image=False):
@@ -140,7 +140,7 @@ def queue_test_job(redis_client, use_real_image=False):
     # Push to Redis queue with proper format
     redis_client.lpush("celery", json.dumps(message))
     
-    print(f"   ✅ Job queued!")
+    print(f"   Job queued!")
     print(f"   Job ID: {job_id}")
     print(f"   Celery Task ID: {celery_task_id}")
     
@@ -178,11 +178,11 @@ def monitor_job(redis_client, celery_task_id, timeout=300):
                         print(f"   [{elapsed:.1f}s] Status: {status}")
                         
                         if status == "SUCCESS":
-                            print(f"\n🎉 Job completed successfully!")
+                            print(f"\nJob completed successfully!")
                             print(f"   Result: {json.dumps(result_data.get('result', {}), indent=2)}")
                             return True
                         elif status == "FAILURE":
-                            print(f"\n❌ Job failed!")
+                            print(f"\nJob failed!")
                             print(f"   Error: {result_data.get('result', 'Unknown error')}")
                             return False
                 except json.JSONDecodeError:
@@ -194,7 +194,7 @@ def monitor_job(redis_client, celery_task_id, timeout=300):
         print("\n\n⏹️  Monitoring stopped by user")
         return None
     
-    print("\n⚠️  Job did not complete within timeout period")
+    print("\nJob did not complete within timeout period")
     return None
 
 
@@ -212,25 +212,25 @@ def main():
     
     # Ask user if they want to proceed
     print("\n" + "=" * 60)
-    response = input("\n🚀 Ready to queue a test job? (y/n): ").strip().lower()
+    response = input("\nReady to queue a test job? (y/n): ").strip().lower()
     
     if response != 'y':
-        print("❌ Test cancelled")
+        print("Test cancelled")
         sys.exit(0)
     
     # Ask if user wants to use real image
-    use_real = input("📸 Use real product image? (y/n, default=n): ").strip().lower() == 'y'
+    use_real = input("Use real product image? (y/n, default=n): ").strip().lower() == 'y'
     
     # Queue test job
     job_id, celery_task_id = queue_test_job(redis_client, use_real_image=use_real)
     
     print("\n" + "=" * 60)
-    print("⚠️  IMPORTANT: Make sure your worker is running!")
+    print("IMPORTANT: Make sure your worker is running!")
     print("   Run in another terminal: celery -A app.worker worker --loglevel=info")
     print("=" * 60)
     
     # Ask if user wants to monitor
-    monitor = input("\n📊 Monitor job status? (y/n): ").strip().lower()
+    monitor = input("\nMonitor job status? (y/n): ").strip().lower()
     
     if monitor == 'y':
         monitor_job(redis_client, celery_task_id)
@@ -239,17 +239,17 @@ def main():
         print(f"   Redis key: celery-task-meta-{celery_task_id}")
         print(f"   Command: redis-cli GET celery-task-meta-{celery_task_id}")
     
-    print("\n✅ Test script completed")
+    print("\nTest script completed")
 
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n\n❌ Test interrupted by user")
+        print("\n\nTest interrupted by user")
         sys.exit(0)
     except Exception as e:
-        print(f"\n❌ Unexpected error: {e}")
+        print(f"\nUnexpected error: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)

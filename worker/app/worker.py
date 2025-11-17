@@ -81,7 +81,7 @@ def generate_3d_model(self, job_id: str, **kwargs):
         metadata = kwargs.get("metadata", {})
         quality = kwargs.get("quality", "balanced")
         
-        logger.info(f"🚀 Starting job {job_id} for product {product_id}")
+        logger.info(f"Starting job {job_id} for product {product_id}")
         logger.info(f"   Shop: {shop}")
         logger.info(f"   Images: {len(image_urls)}")
         logger.info(f"   Quality: {quality}")
@@ -95,10 +95,10 @@ def generate_3d_model(self, job_id: str, **kwargs):
         
         # Create temporary working directory
         temp_dir = tempfile.mkdtemp(prefix=f"3d_gen_{job_id}_")
-        logger.info(f"📁 Working directory: {temp_dir}")
+        logger.info(f"Working directory: {temp_dir}")
         
         # Step 1: Preprocess images (download, remove bg, center, crop)
-        logger.info("📸 Step 1: Preprocessing images...")
+        logger.info("Step 1: Preprocessing images...")
         update_job_status(job_id, "processing", progress=10, metadata={
             "step": "preprocessing",
             "message": "Downloading and preprocessing images"
@@ -112,11 +112,11 @@ def generate_3d_model(self, job_id: str, **kwargs):
             remove_bg=True
         )
         
-        logger.info(f"✅ Preprocessed {len(preprocessed_images)} images")
+        logger.info(f"Preprocessed {len(preprocessed_images)} images")
         update_job_status(job_id, "processing", progress=40)
         
         # Step 2: Generate 3D model using TripoSR
-        logger.info("🎨 Step 2: Generating 3D model...")
+        logger.info("Step 2: Generating 3D model...")
         update_job_status(job_id, "processing", progress=50, metadata={
             "step": "generation",
             "message": "Running 3D generation"
@@ -129,11 +129,11 @@ def generate_3d_model(self, job_id: str, **kwargs):
             quality=quality
         )
         
-        logger.info("✅ 3D model generated")
+        logger.info("3D model generated")
         update_job_status(job_id, "processing", progress=80)
         
         # Step 3: Upload to Supabase storage
-        logger.info("☁️  Step 3: Uploading to Supabase...")
+        logger.info("Step 3: Uploading to Supabase...")
         update_job_status(job_id, "processing", progress=85, metadata={
             "step": "upload",
             "message": "Uploading model to storage"
@@ -146,11 +146,11 @@ def generate_3d_model(self, job_id: str, **kwargs):
             variant_id=variant_id
         )
         
-        logger.info(f"✅ Model uploaded: {model_url}")
+        logger.info(f"Model uploaded: {model_url}")
         update_job_status(job_id, "processing", progress=95)
         
         # Step 4: Update status to completed
-        logger.info("✅ Step 4: Finalizing...")
+        logger.info("Step 4: Finalizing...")
         result_metadata = {
             **metadata,
             "quality": quality,
@@ -166,7 +166,7 @@ def generate_3d_model(self, job_id: str, **kwargs):
             progress=100
         )
         
-        logger.info(f"🎉 Job {job_id} completed successfully!")
+        logger.info(f"Job {job_id} completed successfully!")
         
         return {
             "job_id": job_id,
@@ -176,7 +176,7 @@ def generate_3d_model(self, job_id: str, **kwargs):
         }
     
     except Exception as e:
-        logger.error(f"❌ Job {job_id} failed: {e}", exc_info=True)
+        logger.error(f"Job {job_id} failed: {e}", exc_info=True)
         
         # Update status to failed
         update_job_status(
@@ -194,7 +194,7 @@ def generate_3d_model(self, job_id: str, **kwargs):
         if temp_dir and os.path.exists(temp_dir):
             try:
                 shutil.rmtree(temp_dir)
-                logger.info(f"🧹 Cleaned up temp directory: {temp_dir}")
+                logger.info(f"Cleaned up temp directory: {temp_dir}")
             except Exception as e:
                 logger.warning(f"Failed to clean up temp directory: {e}")
 

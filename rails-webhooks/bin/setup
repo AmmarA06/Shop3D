@@ -6,27 +6,27 @@ echo ""
 
 # Check if bundler is installed
 if ! command -v bundle &> /dev/null; then
-    echo "❌ Bundler not found. Installing..."
+    echo "Bundler not found. Installing..."
     gem install bundler
 fi
 
 # Install dependencies
-echo "📦 Installing dependencies..."
+echo "Installing dependencies..."
 bundle install
 
 # Create required directories
-echo "📁 Creating directories..."
+echo "Creating directories..."
 mkdir -p log tmp/pids
 
 # Check for .env file
 if [ ! -f .env ]; then
-    echo "⚠️  No .env file found. Creating from example..."
+    echo "No .env file found. Creating from example..."
     cp .env.example .env
-    echo "📝 Please edit .env with your configuration"
+    echo "Please edit .env with your configuration"
 fi
 
 echo ""
-echo "✅ Setup complete!"
+echo "Setup complete!"
 echo ""
 echo "To start the server:"
 echo "  bundle exec rails server -p 4000"

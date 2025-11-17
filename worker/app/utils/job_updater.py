@@ -55,13 +55,13 @@ def update_job_status(
         )
 
         response.raise_for_status()
-        print(f"✅ Updated job {job_id} to status: {status}")
+        print(f"Updated job {job_id} to status: {status}")
         return True
 
     except httpx.HTTPError as e:
-        print(f"❌ HTTP error updating job {job_id}: {e}")
+        print(f"HTTP error updating job {job_id}: {e}")
         return False
     except Exception as e:
-        print(f"❌ Failed to update job {job_id}: {e}")
+        print(f"Failed to update job {job_id}: {e}")
         return False
 
