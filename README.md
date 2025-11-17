@@ -4,12 +4,27 @@ A Shopify app that generates 3D models from product photos and provides interact
 
 ## Overview
 
+We aim to take one step closer to making ecommerce more "real". Seeing your products in 3D instead of as flat PNGs provides a more immersive shopping experience beyond traditional online stores.
+
 This app enables Shopify merchants to:
 
 - Auto-generate 3D models from product images using AI
 - Display interactive 3D viewers on product pages
 - Allow customers to rotate, zoom, and inspect products in 3D
 - Support product variants with different models
+
+
+![Untitled design (2)](https://github.com/user-attachments/assets/7ebd9dd5-eaf2-40ab-822b-52aeae48d28e)
+
+
+
+# GPU Requirement Note
+
+It is important to understand that TripoSR requires significant computational power. It is recommended that you use a >3000 series NVIDIA GPU with >12GB of VRAM if running the entire system in real time.
+
+Here is an example of what happens when you use a GPU with less than optimal VRAM and older architecture (My old GTX 1080):
+
+![image](https://github.com/user-attachments/assets/e5b82ba1-8783-4d36-b647-d51554d3d585)
 
 ## Architecture
 
@@ -24,6 +39,8 @@ This app enables Shopify merchants to:
                     │   Supabase (DB + Storage)   │
                     └─────────────────────────────┘
 ```
+
+
 
 ### Services
 
