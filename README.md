@@ -29,15 +29,16 @@ Here is an example of what happens when you use a GPU with less than optimal VRA
 ## Architecture
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Frontend  │────▶│   Backend   │────▶│   Worker    │
-│  (React)    │     │  (Node.js)  │     │  (Python)   │
-└─────────────┘     └─────────────┘     └─────────────┘
-                           │                    │
-                           ▼                    ▼
-                    ┌─────────────────────────────┐
-                    │   Supabase (DB + Storage)   │
-                    └─────────────────────────────┘
+┌───────────┐     ┌───────────────────┐     ┌───────────┐
+│ Frontend  │ --> │      Backend      │ --> │   Worker  │
+│  (React)  │     │ (Node.js + Rails) │     │  (Python) │
+└───────────┘     └───────────────────┘     └───────────┘
+                            │                     │
+                            ▼                     ▼
+  ┌────────────────────────────────────────────────┐
+  │             Supabase (DB + Storage)            │
+  └────────────────────────────────────────────────┘
+
 ```
 
 <img width="1715" height="308" alt="image" src="https://github.com/user-attachments/assets/d274375d-279d-4873-b598-cab5a4dcd707" />
