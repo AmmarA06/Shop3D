@@ -59,6 +59,87 @@ Here is an example of what happens when you use a GPU with less than optimal VRA
 - **Storage**: Supabase (PostgreSQL + Object Storage)
 - **Queue**: Redis
 
+## Quick Start
+
+### Prerequisites
+
+- Node.js 20+
+- Python 3.11+
+- Ruby 3.2+ (optional)
+- Redis
+- Shopify Partner account
+- Supabase account
+
+### Setup
+
+See [SETUP.md](./SETUP.md) for detailed configuration instructions.
+
+### Running the System
+
+#### 1. Start Redis
+```bash
+redis-server
+```
+
+#### 2. Start Backend (Node.js)
+```bash
+cd backend
+npm install
+npm run dev
+# Runs on http://localhost:5000
+```
+
+#### 3. Start Frontend (React)
+```bash
+cd frontend
+npm install
+npm run dev
+# Runs on http://localhost:3000
+```
+
+#### 4. Start Worker (Python)
+```bash
+cd worker
+pip install -r requirements.txt
+celery -A app.worker worker --loglevel=info
+```
+
+#### 5. Start Rails Webhooks (Optional)
+```bash
+cd rails-webhooks
+bundle install
+bundle exec rails server -p 4000
+# Runs on http://localhost:4000
+```
+
+#### 6. Deploy Theme Extension
+```bash
+shopify app dev
+# Or for production:
+shopify app deploy
+```
+
+### Access Points
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:5000/health
+- **Rails Webhooks**: http://localhost:4000/health
+- **Shopify Admin**: Your dev store → Apps → 3D Store Visualizer
+- **Storefront**: Your dev store product pages (with extension)
+
+### Docker (Alternative)
+
+```bash
+docker-compose up
+```
+
+## Documentation
+
+- [SETUP.md](./SETUP.md) - Detailed setup guide
+- [FIXES_APPLIED.md](./FIXES_APPLIED.md) - Recent improvements
+- [rails-webhooks/README.md](./rails-webhooks/README.md) - Webhook service docs
+- [worker/README.md](./worker/README.md) - Worker service docs
+
 ## License
 
 MIT
