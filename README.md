@@ -40,6 +40,9 @@ Here is an example of what happens when you use a GPU with less than optimal VRA
                     └─────────────────────────────┘
 ```
 
+<img width="1715" height="308" alt="image" src="https://github.com/user-attachments/assets/d274375d-279d-4873-b598-cab5a4dcd707" />
+
+
 
 
 ### Services
