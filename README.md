@@ -14,7 +14,9 @@ This app enables Shopify merchants to:
 - Support product variants with different models
 
 
-![Untitled design (2)](https://github.com/user-attachments/assets/7ebd9dd5-eaf2-40ab-822b-52aeae48d28e)
+
+https://github.com/user-attachments/assets/01cc6597-d4a5-4821-95a6-3fa0ac0ffcc2
+
 
 
 
